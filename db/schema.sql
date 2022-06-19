@@ -1,0 +1,50 @@
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS events CASCADE;
+DROP TABLE IF EXISTS event_invitees CASCADE;
+DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS reply CASCADE;
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  picture TEXT
+);
+
+CREATE TABLE events (
+  id SERIAL PRIMARY KEY NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  picture text,
+  start_time bigInt NOT NULL,
+  end_time bigInt NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  latitude float NOT NULL,
+  longtitude float NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE event_invitees (
+  id SERIAL PRIMARY KEY NOT NULL,
+  event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  response TEXT DEFAULT NULL,
+  CONSTRAINT UC_Invite UNIQUE (event_id, user_id)
+);
+
+CREATE TABLE comments (
+  id SERIAL PRIMARY KEY NOT NULL,
+  event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  time bigInt NOT NULL,
+  comment_text VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE reply (
+  id SERIAL PRIMARY KEY NOT NULL,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  comment_id INTEGER REFERENCES comments(id) ON DELETE CASCADE,
+  time bigInt NOT NULL,
+  reply_text VARCHAR(255) NOT NULL
+);
