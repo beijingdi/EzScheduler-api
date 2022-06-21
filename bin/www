@@ -7,6 +7,19 @@
 var app = require('../app');
 var debug = require('debug')('backend:server');
 var http = require('http');
+var cors = require('cors');
+var whitelist = ['https://www.ezschedular.ca','http://localhost:3000'];
+var corsOptionsDelegate = function (req, callback) {   
+  var corsOptions;  
+  if (whitelist.indexOf(req.header('Origin')) !== -1) {    
+     corsOptions = { origin: true, credentials: true } // reflect (enable) the requested origin in the CORS response  
+     } 
+  else { 
+    corsOptions = { origin: false } // disable CORS for this request  
+   }   
+  callback(null, corsOptions) // callback expects two parameters: error and options 
+}; 
+app.use(cors(corsOptionsDelegate));
 
 /**
  * Get port from environment and store in Express.
@@ -88,3 +101,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
